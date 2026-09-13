@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Private, browser-based purchase-register checks for common GST data mistakes.">
+  <title>GST Purchase Register Checker</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <p class="eyebrow">Local spreadsheet validation</p>
+      <h1>GST Purchase Register Checker</h1>
+      <p class="lede">Find common GSTIN, duplicate-invoice, tax-split, and rate-calculation issues before reconciliation. Your file is processed in this browser; it is never uploaded by this app.</p>
+      <p class="notice"><strong>Important:</strong> This is a data-quality checker, not GST filing or tax advice. Confirm exceptions with your accountant and the current GST rules.</p>
+    </header>
+
+    <section class="card upload-card" aria-labelledby="upload-heading">
+      <div>
+        <h2 id="upload-heading">1. Choose a purchase register</h2>
+        <p>CSV, XLSX, or XLS. The first worksheet is used for Excel files.</p>
+      </div>
+      <div class="upload-actions">
+        <label class="button primary" for="file-input">Choose file</label>
+        <input id="file-input" type="file" accept=".csv,.xlsx,.xls" hidden>
+        <button id="demo-button" class="button secondary" type="button">Load demo data</button>
+      </div>
+      <p id="file-status" class="muted" aria-live="polite">No file selected.</p>
+    </section>
+
+    <section id="mapping-card" class="card hidden" aria-labelledby="mapping-heading">
+      <h2 id="mapping-heading">2. Check column mapping</h2>
+      <p>Auto-detected fields are shown below. Required fields are GSTIN and invoice number; other checks use the fields you map.</p>
+      <div id="mapping-grid" class="mapping-grid"></div>
+      <button id="run-button" class="button primary" type="button">Run checks</button>
+    </section>
+
+    <section id="results-card" class="hidden" aria-labelledby="results-heading">
+      <div class="results-head">
+        <div>
+          <p class="eyebrow">Validation report</p>
+          <h2 id="results-heading">3. Review exceptions</h2>
+          <p id="summary-text" class="muted"></p>
+        </div>
+        <div class="result-actions">
+          <label class="switch"><input id="exceptions-only" type="checkbox"> Show exceptions only</label>
+          <button id="download-button" class="button primary" type="button">Download error report CSV</button>
+        </div>
+      </div>
+      <div id="metrics" class="metrics"></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Row</th><th>Invoice</th><th>GSTIN</th><th>Status</th><th>Issues</th></tr></thead>
+        <tbody id="results-body"></tbody>
+      </table></div>
+      <p class="muted small">The table displays up to 500 rows. The download contains every row and its issues.</p>
+    </section>
+
+    <section class="how-it-works">
+      <h2>What it checks</h2>
+      <div class="check-grid">
+        <article><h3>GSTIN format</h3><p>Validates the GSTIN pattern and checksum when a GSTIN field is mapped.</p></article>
+        <article><h3>Duplicates</h3><p>Flags repeated GSTIN + invoice-number combinations.</p></article>
+        <article><h3>Tax structure</h3><p>Flags CGST/SGST mismatch and entries with both IGST and CGST/SGST.</p></article>
+        <article><h3>Tax plausibility</h3><p>Compares tax amount with common GST rates. Treat this as a warning for review, not a filing decision.</p></article>
+      </div>
+    </section>
+  </main>
+  <footer>GST Purchase Register Checker · Browser-only MVP · No data storage</footer>
+</body>
+</html>
